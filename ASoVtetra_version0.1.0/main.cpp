@@ -1,7 +1,7 @@
-#pragma comment(lib, "comctl32.lib")   // InitCommonControlsEx ‚Ì‚½‚ß
+#pragma comment(lib, "comctl32.lib")   // InitCommonControlsEx ã®ãŸã‚
 #pragma comment(lib, "d2d1.lib")       // Direct2D
 #pragma comment(lib, "windowscodecs.lib") // WIC
-#pragma comment(lib, "ws2_32.lib")     // Winsockitcp.cpp ‚É‚à“ü‚ê‚Ä‚¢‚é‚È‚çd•¡‰Âj
+#pragma comment(lib, "ws2_32.lib")     // Winsockï¼ˆtcp.cpp ã«ã‚‚å…¥ã‚Œã¦ã„ã‚‹ãªã‚‰é‡è¤‡å¯ï¼‰
 
 #include <windows.h>
 #include <commctrl.h>
@@ -25,9 +25,9 @@
 
 
 // ------------------------------
-// ƒOƒ[ƒoƒ‹•Ï”i–{‘Ìj
+// ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°ï¼ˆæœ¬ä½“ï¼‰
 // ------------------------------
-// ‹N“®’¼Œã‚ÍA•ÒWƒ‚[ƒhitrue), –{”Ôƒ‚[ƒhifales)
+// èµ·å‹•ç›´å¾Œã¯ã€ç·¨é›†ãƒ¢ãƒ¼ãƒ‰ï¼ˆtrue), æœ¬ç•ªãƒ¢ãƒ¼ãƒ‰ï¼ˆfales)
 bool g_editMode = true;
 
 int g_windowWidth = 0;
@@ -66,10 +66,10 @@ MouthState g_mouthState = MouthState::Closed;
 std::map<std::string, std::wstring> g_bitmapFiles;
 std::map<std::string, ID2D1Bitmap*> g_bitmaps;
 
-std::map<std::string, ID2D1Bitmap*> g_bitmapsWindow;   // •ÒWƒ‚[ƒh—pig_pRenderTargetj
-std::map<std::string, ID2D1Bitmap*> g_bitmapsLayered;  // ŒÅ’èƒ‚[ƒh—pig_pDCRenderTargetj
+std::map<std::string, ID2D1Bitmap*> g_bitmapsWindow;   // ç·¨é›†ãƒ¢ãƒ¼ãƒ‰ç”¨ï¼ˆg_pRenderTargetï¼‰
+std::map<std::string, ID2D1Bitmap*> g_bitmapsLayered;  // å›ºå®šãƒ¢ãƒ¼ãƒ‰ç”¨ï¼ˆg_pDCRenderTargetï¼‰
 
-// ’Ç‰Á: İ’èƒ_ƒCƒAƒƒO‚Ì HWND ‚ğƒOƒ[ƒoƒ‹•Ï”‚Æ‚µ‚ÄéŒ¾
+// è¿½åŠ : è¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã® HWND ã‚’ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°ã¨ã—ã¦å®£è¨€
 HWND g_hSettingsDlg = nullptr;
 
 
@@ -121,7 +121,7 @@ void ToggleWindowMode(HWND hwnd)
     LONG style = GetWindowLong(hwnd, GWL_STYLE);
     LONG exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
 
-    // ‚¢‚Ü‚ÌƒNƒ‰ƒCƒAƒ“ƒgƒTƒCƒY‚ğæ“¾
+    // ã„ã¾ã®ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’å–å¾—
     RECT rcClient;
     GetClientRect(hwnd, &rcClient);
     int clientW = rcClient.right - rcClient.left;
@@ -129,12 +129,12 @@ void ToggleWindowMode(HWND hwnd)
 
     if (g_editMode)
     {
-        // •ÒWƒ‚[ƒhF˜g‚ ‚èE”ñƒŒƒCƒ„[ƒh
+        // ç·¨é›†ãƒ¢ãƒ¼ãƒ‰ï¼šæ ã‚ã‚Šãƒ»éãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒ‰
         style = WS_OVERLAPPEDWINDOW;
         exStyle &= ~(WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_TRANSPARENT);
         exStyle |= WS_EX_APPWINDOW;
 
-        // š ŒÅ’èƒ‚[ƒh—p RT ‚Æƒrƒbƒgƒ}ƒbƒv‚ğÌ‚Ä‚é
+        // â˜… å›ºå®šãƒ¢ãƒ¼ãƒ‰ç”¨ RT ã¨ãƒ“ãƒƒãƒˆãƒãƒƒãƒ—ã‚’æ¨ã¦ã‚‹
         if (g_pDCRenderTarget) {
             g_pDCRenderTarget->Release();
             g_pDCRenderTarget = nullptr;
@@ -148,14 +148,14 @@ void ToggleWindowMode(HWND hwnd)
 
     else
     {
-        // ŒÅ’èƒ‚[ƒhFƒŒƒCƒ„[ƒh{Å‘O–Êiƒ}ƒEƒX“§‰ß‚Í WM_NCHITTEST ‚Å‚â‚éj
+        // å›ºå®šãƒ¢ãƒ¼ãƒ‰ï¼šãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒ‰ï¼‹æœ€å‰é¢ï¼ˆãƒã‚¦ã‚¹é€éã¯ WM_NCHITTEST ã§ã‚„ã‚‹ï¼‰
         style = WS_POPUP;
         exStyle &= ~WS_EX_APPWINDOW;
         exStyle |= WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_TRANSPARENT;
 
         CreateMemorySurface(hwnd);
         CreateDCRenderTarget();
-        // š •ÒWƒ‚[ƒh—p RT ‚Æƒrƒbƒgƒ}ƒbƒv‚ğÌ‚Ä‚é
+        // â˜… ç·¨é›†ãƒ¢ãƒ¼ãƒ‰ç”¨ RT ã¨ãƒ“ãƒƒãƒˆãƒãƒƒãƒ—ã‚’æ¨ã¦ã‚‹
         if (g_pRenderTarget) {
             g_pRenderTarget->Release();
             g_pRenderTarget = nullptr;
@@ -169,36 +169,36 @@ void ToggleWindowMode(HWND hwnd)
     SetWindowLong(hwnd, GWL_STYLE, style);
     SetWindowLong(hwnd, GWL_EXSTYLE, exStyle);
 
-    // ‚±‚ÌƒXƒ^ƒCƒ‹‚Åu“¯‚¶ƒNƒ‰ƒCƒAƒ“ƒgƒTƒCƒYv‚ğ‚ÂŠO‘¤‹éŒ`‚ğŒvZ
+    // ã“ã®ã‚¹ã‚¿ã‚¤ãƒ«ã§ã€ŒåŒã˜ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‚µã‚¤ã‚ºã€ã‚’æŒã¤å¤–å´çŸ©å½¢ã‚’è¨ˆç®—
     RECT rcNew = { 0, 0, clientW, clientH };
     AdjustWindowRectEx(&rcNew, style, FALSE, exStyle);
     int newW = rcNew.right - rcNew.left;
     int newH = rcNew.bottom - rcNew.top;
 
-    // ˆÊ’u‚Í‚»‚Ì‚Ü‚ÜAƒTƒCƒY‚¾‚¯V‚µ‚¢ŠO‘¤ƒTƒCƒY‚É
+    // ä½ç½®ã¯ãã®ã¾ã¾ã€ã‚µã‚¤ã‚ºã ã‘æ–°ã—ã„å¤–å´ã‚µã‚¤ã‚ºã«
     RECT rcWin;
     GetWindowRect(hwnd, &rcWin);
 
 
-    // ŒÅ’èƒ‚[ƒh‚É“ü‚é‚Æ‚«‚Í TOPMOST ‚ğ–¾¦
+    // å›ºå®šãƒ¢ãƒ¼ãƒ‰ã«å…¥ã‚‹ã¨ãã¯ TOPMOST ã‚’æ˜ç¤º
     UINT flags = SWP_FRAMECHANGED | SWP_NOOWNERZORDER | SWP_SHOWWINDOW;
 
     if (!g_editMode) {
-        // ŒÅ’èƒ‚[ƒh ¨ Å‘O–ÊŒÅ’è
+        // å›ºå®šãƒ¢ãƒ¼ãƒ‰ â†’ æœ€å‰é¢å›ºå®š
         SetWindowPos(hwnd, HWND_TOPMOST,
             rcWin.left, rcWin.top,
             newW, newH,
             flags);
     }
     else {
-        // •ÒWƒ‚[ƒh ¨ NOTOPMOST ‚É–ß‚·
+        // ç·¨é›†ãƒ¢ãƒ¼ãƒ‰ â†’ NOTOPMOST ã«æˆ»ã™
         SetWindowPos(hwnd, HWND_NOTOPMOST,
             rcWin.left, rcWin.top,
             newW, newH,
             flags);
     }
 
-    // ƒTƒCƒY‚ÍƒŠƒZƒbƒg‚µ‚Ä‚¨‚­‚ÆˆÀ‘S
+    // ã‚µã‚¤ã‚ºã¯ãƒªã‚»ãƒƒãƒˆã—ã¦ãŠãã¨å®‰å…¨
     g_windowWidth = 0;
     g_windowHeight = 0;
 
@@ -218,7 +218,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
     case WM_MOUSEACTIVATE:
         if (!g_editMode) {
-            return MA_NOACTIVATEANDEAT; // ƒNƒŠƒbƒN‚ğH‚×‚Ä‰º‚É“n‚·
+            return MA_NOACTIVATEANDEAT; // ã‚¯ãƒªãƒƒã‚¯ã‚’é£Ÿã¹ã¦ä¸‹ã«æ¸¡ã™
         }
         break;
 
@@ -249,7 +249,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             g_pRenderTarget->Resize(D2D1::SizeU(rc.right - rc.left, rc.bottom - rc.top));
         }
 
-        // ŒÅ’èƒ‚[ƒh‚É‚µ‚½‚çADrawToLayeredWindow‚ğŒÄ‚Ô‚æ‚¤‚É‚·‚é‚½‚ß‚ÌTIMER‹Lq
+        // å›ºå®šãƒ¢ãƒ¼ãƒ‰ã«ã—ãŸã‚‰ã€DrawToLayeredWindowã‚’å‘¼ã¶ã‚ˆã†ã«ã™ã‚‹ãŸã‚ã®TIMERè¨˜è¿°
         SetTimer(hwnd, 1, 33, nullptr);
 
         return 0;
@@ -258,12 +258,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         if (!g_editMode)
         {
-            // ŒÅ’èƒ‚[ƒhFƒŒƒCƒ„[ƒh‚¾‚¯XV
+            // å›ºå®šãƒ¢ãƒ¼ãƒ‰ï¼šãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒ‰ã ã‘æ›´æ–°
             DrawToLayeredWindow(hwnd);
         }
         else
         {
-            // •ÒWƒ‚[ƒhF•’Ê‚ÌÄ•`‰æ
+            // ç·¨é›†ãƒ¢ãƒ¼ãƒ‰ï¼šæ™®é€šã®å†æç”»
             InvalidateRect(hwnd, nullptr, FALSE);
         }
         return 0;
@@ -275,12 +275,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         {
             PAINTSTRUCT ps;
             BeginPaint(hwnd, &ps);
-            DrawScene(hwnd); // •”wŒi{PNGi•ÒWƒ‚[ƒhj
+            DrawScene(hwnd); // é»’èƒŒæ™¯ï¼‹PNGï¼ˆç·¨é›†ãƒ¢ãƒ¼ãƒ‰ï¼‰
             EndPaint(hwnd, &ps);
         }
         else
         {
-            // ŒÅ’èƒ‚[ƒh‚Å‚Í WM_PAINT ‚Å‚Í•`‰æ‚µ‚È‚¢
+            // å›ºå®šãƒ¢ãƒ¼ãƒ‰ã§ã¯ WM_PAINT ã§ã¯æç”»ã—ãªã„
             ValidateRect(hwnd, nullptr);
         }
         return 0;
@@ -312,7 +312,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         return 0;
 
     case WM_DESTROY:
-        // Direct2D ƒŠƒ\[ƒX‰ğ•ú
+        // Direct2D ãƒªã‚½ãƒ¼ã‚¹è§£æ”¾
         if (g_pRenderTarget) { g_pRenderTarget->Release(); g_pRenderTarget = nullptr; }
         if (g_pD2DFactory) { g_pD2DFactory->Release(); g_pD2DFactory = nullptr; }
         if (g_pWICFactory) { g_pWICFactory->Release(); g_pWICFactory = nullptr; }
@@ -329,12 +329,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
 {
     HRESULT hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
-    // ¸”s‚µ‚Ä‚½‚çƒƒOo‚·
+    // å¤±æ•—ã—ã¦ãŸã‚‰ãƒ­ã‚°å‡ºã™
     if (FAILED(hr)) {
         OutputDebugString(L"[COM] CoInitializeEx FAILED\n");
     }
 
-    // ‚±‚±‚Å WIC ƒtƒ@ƒNƒgƒŠì¬
+    // ã“ã“ã§ WIC ãƒ•ã‚¡ã‚¯ãƒˆãƒªä½œæˆ
     hr = CoCreateInstance(
         CLSID_WICImagingFactory,
         nullptr,
@@ -357,10 +357,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
         IID_PPV_ARGS(&g_pWICFactory)
     );
 
-    SetProcessDPIAware(); // Settings ƒ_ƒCƒAƒƒO‚Ì DPI ‘Î‰‚ğ ON
+    SetProcessDPIAware(); // Settings ãƒ€ã‚¤ã‚¢ãƒ­ã‚°ã® DPI å¯¾å¿œã‚’ ON
 
     INITCOMMONCONTROLSEX icc = { sizeof(INITCOMMONCONTROLSEX) };
-    icc.dwICC = ICC_BAR_CLASSES;  // Trackbar, ProgressBar ‚È‚Ç
+    icc.dwICC = ICC_BAR_CLASSES;  // Trackbar, ProgressBar ãªã©
     InitCommonControlsEx(&icc);
 
     // CoInitialize(nullptr);
@@ -373,24 +373,24 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
     wc.cbSize = sizeof(WNDCLASSEX);
     wc.lpfnWndProc = WndProc;
     wc.hInstance = hInstance;
-    wc.lpszClassName = L"FaceOverlayWindowClass";
+    wc.lpszClassName = L"ASoVtetraWindowClass";
     RegisterClassEx(&wc);
 
     HWND hwnd = CreateWindowEx(
-        0, // WS_EX_LAYERED | WS_EX_TOPMOST,// F1ƒL[‚Å“§–¾BWS_EX_TRANSPARENT(‹N“®’¼Œã‚É“§–¾ƒ‚[ƒh‚Ìê‡)ŠÔ‚É“ü‚ê‚é
-        L"FaceOverlayWindowClass",
-        L"FaceOverlay",
-        WS_OVERLAPPEDWINDOW, // ‚±‚±‚àˆê“I‚É WS_POPUP ¨ WS_OVERLAPPEDWINDOW ‚É‚µ‚ÄOK
+        0, // WS_EX_LAYERED | WS_EX_TOPMOST,// F1ã‚­ãƒ¼ã§é€æ˜ã€‚WS_EX_TRANSPARENT(èµ·å‹•ç›´å¾Œã«é€æ˜ãƒ¢ãƒ¼ãƒ‰ã®å ´åˆ)é–“ã«å…¥ã‚Œã‚‹
+        L"ASoVtetraWindowClass",
+        L"ASoVtetra",
+        WS_OVERLAPPEDWINDOW, // ã“ã“ã‚‚ä¸€æ™‚çš„ã« WS_POPUP â†’ WS_OVERLAPPEDWINDOW ã«ã—ã¦OK
         0, 0, 900, 900,
         nullptr, nullptr, hInstance, nullptr);
 
     ShowWindow(hwnd, nCmdShow);
 
 
-    // İ’èƒ_ƒCƒAƒƒO(•\¦j
+    // è¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°(è¡¨ç¤ºï¼‰
     // CreateDialog(hInstance, MAKEINTRESOURCE(IDD_SETTINGS), hwnd, SettingsProc);
 
-    // TCP ƒXƒŒƒbƒh‹N“®i•K—v‚È‚çj
+    // TCP ã‚¹ãƒ¬ãƒƒãƒ‰èµ·å‹•ï¼ˆå¿…è¦ãªã‚‰ï¼‰
     // std::thread th(TcpRecvThread);
     // th.detach();
 
