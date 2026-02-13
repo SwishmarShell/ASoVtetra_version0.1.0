@@ -1,3 +1,5 @@
+English version is available here: README.en.md
+
 # ASoVtetra_version0.1.0
 ## Version
 現在のバージョン： v0.1.0
