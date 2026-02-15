@@ -1,4 +1,7 @@
-English version is available here: README.en.md
+- English version is available here: README.en.md
+ - Download
+You can download the latest version from the Releases page:
+https://github.com/SwishmarShell/ASoVtetra_version0.1.0/releases/latest
 
 # ASoVtetra_version0.1.0
 ## Version
